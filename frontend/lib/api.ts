@@ -1,6 +1,7 @@
 // src/lib/api.ts
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+// Vercel environment variables se URL fetch karein
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://your-backend-domain.com/api";
 
 function getToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -26,7 +27,6 @@ export function setStoredUser(user: unknown) {
   localStorage.setItem("careerforge_user", JSON.stringify(user));
 }
 
-// Ye function download ke liye zaroori hai
 export function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -36,6 +36,7 @@ export function downloadBlob(blob: Blob, filename: string) {
   URL.revokeObjectURL(url);
 }
 
+// Improved Request Function
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
   const headers: Record<string, string> = {
@@ -44,7 +45,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${API_URL}${path.startsWith('/') ? '' : '/'}${path}`, { ...options, headers });
+  // Ensure path starts with / and concat correctly
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  const res = await fetch(`${API_URL}${cleanPath}`, { ...options, headers });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
