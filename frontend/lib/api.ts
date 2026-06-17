@@ -1,30 +1,30 @@
-// Sahi format ye hona chahiye
-const API_URL = "https://career-forge-murex.vercel.app/api";
 
+const API_URL = "https://career-forge-murex.vercel.app/api";
+ 
 function getToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("careerforge_token");
 }
-
+ 
 export function setToken(token: string) {
   localStorage.setItem("careerforge_token", token);
 }
-
+ 
 export function clearToken() {
   localStorage.removeItem("careerforge_token");
   localStorage.removeItem("careerforge_user");
 }
-
+ 
 export function getStoredUser() {
   if (typeof window === "undefined") return null;
   const raw = localStorage.getItem("careerforge_user");
   return raw ? JSON.parse(raw) : null;
 }
-
+ 
 export function setStoredUser(user: unknown) {
   localStorage.setItem("careerforge_user", JSON.stringify(user));
 }
-
+ 
 export function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -33,7 +33,7 @@ export function downloadBlob(blob: Blob, filename: string) {
   a.click();
   URL.revokeObjectURL(url);
 }
-
+ 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
   const headers: Record<string, string> = {
@@ -41,31 +41,47 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     ...(options.headers as Record<string, string>),
   };
   if (token) headers.Authorization = `Bearer ${token}`;
-
-  const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  const res = await fetch(`${API_URL}${cleanPath}`, { ... }); 
-}
-
-
+ 
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  const fullUrl = `${API_URL}${cleanPath}`;
+  console.log("Using API URL:", process.env.NEXT_PUBLIC_API_URL); 
+ 
+  const res = await fetch(fullUrl, {
+    ...options,
+    headers,
+  });
+ 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
     throw new Error(err.error || "Request failed");
   }
-
+ 
   const contentType = res.headers.get("content-type") || "";
   if (contentType.includes("application/pdf")) {
     return res.blob() as unknown as Promise<T>;
   }
-
+ 
   return res.json();
 }
-
+ 
 export const api = {
   auth: {
-    register: (data: any) => request<{ user: any; token: string }>("/auth/register", { method: "POST", body: JSON.stringify(data) }),
-    login: (data: any) => request<{ user: any; token: string }>("/auth/login", { method: "POST", body: JSON.stringify(data) }),
+    register: (data: any) =>
+      request<{ user: any; token: string }>("/auth/register", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    login: (data: any) =>
+      request<{ user: any; token: string }>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
     me: () => request<{ user: any }>("/auth/me"),
-    updateProfile: (data: any) => request<{ user: any }>("/auth/profile", { method: "PATCH", body: JSON.stringify(data) }),
+    updateProfile: (data: any) =>
+      request<{ user: any }>("/auth/profile", {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }),
   },
-  // Baki services yahan add rahegi (yahi structure follow karein)
+  // Baki services (jobs, resumes, applications, ats, recruiter, dashboard) yahan isi structure se add hongi
 };
