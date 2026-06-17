@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://your-backend-domain.com/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://career-forge-murex.vercel.app/api";
 
 function getToken(): string | null {
   if (typeof window === "undefined") return null;
