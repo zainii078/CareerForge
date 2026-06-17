@@ -1,11 +1,6 @@
 // src/lib/api.ts
 
-// Sirf process.env use karein, fallback remove kar dein taake galti ka pata chale
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
-
-if (!API_URL) {
-  console.error("NEXT_PUBLIC_API_URL is not defined in environment variables!");
-}
 
 function getToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -31,10 +26,17 @@ export function setStoredUser(user: unknown) {
   localStorage.setItem("careerforge_user", JSON.stringify(user));
 }
 
-async function request<T>(
-  path: string,
-  options: RequestInit = {}
-): Promise<T> {
+// Ye function download ke liye zaroori hai
+export function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -42,7 +44,6 @@ async function request<T>(
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  // API_URL ke aage slash check karein
   const res = await fetch(`${API_URL}${path.startsWith('/') ? '' : '/'}${path}`, { ...options, headers });
 
   if (!res.ok) {
@@ -65,7 +66,6 @@ export const api = {
     me: () => request("/auth/me"),
     updateProfile: (data: any) => request("/auth/profile", { method: "PATCH", body: JSON.stringify(data) }),
   },
-  // Baki sab services yahan pehle ki tarah rahengi...
   resumes: {
     getPrimary: () => request("/resumes/primary"),
     update: (id: string, data: any) => request(`/resumes/${id}`, { method: "PUT", body: JSON.stringify(data) }),
