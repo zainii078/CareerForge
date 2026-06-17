@@ -1,3 +1,4 @@
+// Sahi format ye hona chahiye
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://career-forge-murex.vercel.app/api";
 
 function getToken(): string | null {
@@ -42,7 +43,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   if (token) headers.Authorization = `Bearer ${token}`;
 
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  const res = await fetch(`${API_URL}${cleanPath}`, { ...options, headers });
+  const res = await fetch(`${API_URL}${cleanPath}`, { ... }); 
+}
+
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
