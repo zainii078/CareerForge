@@ -17,9 +17,13 @@ const PORT = process.env.PORT || 5000;
 const cors = require('cors');
 
 // Isay apne existing code se replace karein
+const cors = require('cors');
+
+// Ye lines add karein:
 app.use(cors({
-  origin: ["https://career-forge-3jgi.vercel.app", "http://localhost:3000"], // Aapka Frontend ka live URL
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  origin: ["https://career-forge-3jgi.vercel.app"], // Sirf aapka live frontend
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
 app.use(express.json({ limit: "10mb" }));

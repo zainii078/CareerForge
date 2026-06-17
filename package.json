@@ -12,6 +12,7 @@
     "start:backend": "npm start --prefix backend",
     "start:frontend": "npm start --prefix frontend",
     "start:ai": "cd ai-service && python -m uvicorn main:app --host 127.0.0.1 --port 8000",
-    "start:all": "powershell -ExecutionPolicy Bypass -File ./start.ps1"
+    "start:all": "powershell -ExecutionPolicy Bypass -File ./start.ps1",
+    "build": "npm run build --prefix frontend"
   }
 }
