@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 
+// Routes
 const authRoutes = require("./routes/auth");
 const resumeRoutes = require("./routes/resumes");
 const jobRoutes = require("./routes/jobs");
@@ -12,26 +13,23 @@ const recruiterRoutes = require("./routes/recruiter");
 const dashboardRoutes = require("./routes/dashboard");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-const cors = require('cors');
-
-// Isay apne existing code se replace karein
-const cors = require('cors');
-
-// Ye lines add karein:
+// Middlewares
 app.use(cors({
-  origin: ["https://career-forge-3jgi.vercel.app"], // Sirf aapka live frontend
+  origin: ["https://career-forge-3jgi.vercel.app"], // Apna frontend URL yahan sahi rakhein
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
+
 app.use(express.json({ limit: "10mb" }));
 
+// Health Check Route
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", service: "careerforge-backend" });
 });
 
+// API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/resumes", resumeRoutes);
 app.use("/api/jobs", jobRoutes);
@@ -40,41 +38,26 @@ app.use("/api/ats", atsRoutes);
 app.use("/api/recruiter", recruiterRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
+// Error Handling Middleware
 app.use((err, _req, res, _next) => {
-  console.error("Unhandled error:", err);
+  console.error("Server Error:", err.stack);
   res.status(500).json({ error: "Internal server error" });
 });
 
-async function start() {
-  try {
-    console.log("🚀 Starting CareerForge Backend...");
-    console.log("📡 Connecting to MongoDB...");
+// Database Connection
+connectDB().then(() => {
+  console.log("✅ Database connected successfully");
+}).catch((err) => {
+  console.error("❌ Database connection failed:", err);
+});
 
-    console.log("Checking environment...");
-console.log("PORT found:", process.env.PORT); 
-console.log("MONGODB_URI found:", process.env.MONGODB_URI ? "YES" : "NO");
-    
-    await connectDB();
-    
-    console.log("✅ Database connection verified!");
-    
-    app.listen(PORT, () => {
-      console.log(`\n✅ CareerForge Backend Server Running!`);
-      console.log(`🌐 URL: http://127.0.0.1:${PORT}`);
-      console.log(`📊 Health Check: http://127.0.0.1:${PORT}/api/health`);
-      console.log(`🔐 JWT Expires In: ${process.env.JWT_EXPIRES_IN}`);
-      console.log(`🤖 AI Service: ${process.env.AI_SERVICE_URL}`);
-      console.log(`🎨 Frontend URL: ${process.env.FRONTEND_URL}`);
-      console.log(`\n✨ Server ready to accept requests!\n`);
-    });
-  } catch (err) {
-    console.error("\n❌ Failed to start server:", err.message);
-    console.error("💡 Troubleshooting:");
-    console.error("   1. Check MongoDB URI in .env file");
-    console.error("   2. Verify IP whitelist in MongoDB Atlas");
-    console.error("   3. Check internet connection");
-    process.exit(1);
-  }
+// Server Start (Local ke liye, Vercel khud manage karega)
+const PORT = process.env.PORT || 5000;
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
 }
 
-start();
+// Vercel ke liye export
+module.exports = app;
