@@ -8,8 +8,10 @@ const auth = require("../middleware/auth");
 const router = express.Router();
 
 function signToken(user) {
+  const expiresIn = process.env.JWT_EXPIRES_IN || "7d";
+  console.log("JWT_EXPIRES_IN:", expiresIn);
   return jwt.sign({ userId: user._id.toString(), role: user.role }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+    expiresIn: expiresIn,
   });
 }
 
@@ -57,7 +59,7 @@ router.post("/register", async (req, res) => {
     res.status(201).json({ user: user.toPublicJSON(), token });
   } catch (error) {
     console.error("Register error:", error);
-    res.status(500).json({ error: "Registration failed" });
+    res.status(500).json({ error: "Registration failed", message: error.message });
   }
 });
 

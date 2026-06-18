@@ -87,7 +87,7 @@ export default function ATSPage() {
       const result = await api.ats.analyze({ job_description: jobDescription });
       setAnalysis(result);
       setAnalysisComplete(true);
-      if (resume) setResume({ ...resume, ats_score: result.overall_score });
+      if (resume) setResume({ ...resume, ats_score: result.overall_score || result.score });
       await api.auth.updateProfile({ job_preference: jobDescription.slice(0, 500) }).catch(() => {});
       toast.success("ATS analysis complete!");
     } catch (error) {
@@ -254,13 +254,13 @@ export default function ATSPage() {
                         <div className="w-40 h-40 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 p-1">
                           <div className="w-full h-full rounded-full bg-card flex items-center justify-center">
                             <div className="text-center">
-                              <span className="text-5xl font-bold">{analysis.overall_score}</span>
+                              <span className="text-5xl font-bold">{analysis.overall_score || analysis.score}</span>
                               <p className="text-sm text-muted-foreground">ATS Score</p>
                             </div>
                           </div>
                         </div>
-                        <Badge className={`absolute -bottom-2 left-1/2 -translate-x-1/2 ${analysis.overall_score >= 80 ? "bg-green-500" : analysis.overall_score >= 60 ? "bg-amber-500" : "bg-red-500"}`}>
-                          {analysis.overall_score >= 80 ? "Good" : analysis.overall_score >= 60 ? "Fair" : "Needs Work"}
+                        <Badge className={`absolute -bottom-2 left-1/2 -translate-x-1/2 ${(analysis.overall_score || analysis.score) >= 80 ? "bg-green-500" : (analysis.overall_score || analysis.score) >= 60 ? "bg-amber-500" : "bg-red-500"}`}>
+                          {(analysis.overall_score || analysis.score) >= 80 ? "Good" : (analysis.overall_score || analysis.score) >= 60 ? "Fair" : "Needs Work"}
                         </Badge>
                       </div>
                       <div className="flex-1 w-full">

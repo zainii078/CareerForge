@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { setToken, setStoredUser } from "@/lib/api";
+import { api, setToken, setStoredUser } from "@/lib/api";
 import { toast } from "sonner";
 
 const signupSchema = z.object({
@@ -42,20 +42,13 @@ export default function SignupPage() {
   const onSubmit = async (data: SignupForm) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-          full_name: data.fullName,
-          role: data.role,
-          company_name: data.role === "recruiter" ? data.companyName : undefined,
-        }),
+      const result = await api.auth.register({
+        email: data.email,
+        password: data.password,
+        full_name: data.fullName,
+        role: data.role,
+        company_name: data.role === "recruiter" ? data.companyName : undefined,
       });
-
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || "Signup failed");
 
       setToken(result.token);
       setStoredUser(result.user);
@@ -67,6 +60,7 @@ export default function SignupPage() {
       setIsLoading(false);
     }
   };
+
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -127,6 +121,9 @@ export default function SignupPage() {
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating account...</> : "Create account"}
               </Button>
+              <div className="text-center text-sm">
+                Already have an account? <Link href="/login" className="text-blue-500 hover:underline">Sign in</Link>
+              </div>
             </form>
           </Form>
         </CardContent>

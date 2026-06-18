@@ -14,9 +14,25 @@ const dashboardRoutes = require("./routes/dashboard");
 
 const app = express();
 
-// Middlewares
+// Build CORS origins from environment
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://127.0.0.1:3000",
+];
+if (process.env.FRONTEND_URL) {
+  // Support comma-separated origins
+  process.env.FRONTEND_URL.split(",").forEach((u) => {
+    const trimmed = u.trim().replace(/\/+$/, "");
+    if (trimmed && !allowedOrigins.includes(trimmed)) {
+      allowedOrigins.push(trimmed);
+    }
+  });
+}
+console.log("🌐 CORS allowed origins:", allowedOrigins);
+
 app.use(cors({
-  origin: ["https://career-forge-3jgi.vercel.app"], // Apna frontend URL yahan sahi rakhein
+  origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
