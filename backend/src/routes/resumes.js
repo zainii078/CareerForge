@@ -111,7 +111,7 @@ router.post("/:id/export/pdf", auth(), async (req, res) => {
     const resume = await Resume.findOne({ _id: req.params.id, user_id: req.user._id });
     if (!resume) return res.status(404).json({ error: "Resume not found" });
 
-    const template = req.body.template || resume.template || "modern";
+    const template = req.query.template || req.body.template || resume.template || "modern";
     const pdfBuffer = await generatePDF(resume.toPublicJSON(), template);
 
     const filename = `${(resume.personal_info?.full_name || "resume").replace(/\s+/g, "_")}_${template}.pdf`;

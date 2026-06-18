@@ -133,6 +133,10 @@ export const api = {
     candidates: (params: Record<string, any> = {}) =>
       request<Candidate[]>(`/recruiter/candidates${qs(params)}`),
     jobs: () => request<any[]>("/recruiter/jobs"),
+    updateStatus: (id: string, status: string) => request<any>(`/recruiter/applications/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status })
+    })
   },
 };
 

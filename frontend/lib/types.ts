@@ -24,6 +24,7 @@ export interface PersonalInfo {
   linkedin?: string;
   website?: string;
   github?: string;
+  avatar_base64?: string;
   summary: string;
 }
 

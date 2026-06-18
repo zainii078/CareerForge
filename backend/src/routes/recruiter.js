@@ -180,7 +180,7 @@ router.get("/candidates", auth(["recruiter", "admin"]), async (req, res) => {
           id: app._id.toString(),
           application_id: app._id.toString(),
           name: user?.full_name || resume?.personal_info?.full_name || "Unknown",
-          avatar: user?.avatar_url || "",
+          avatar: resume?.personal_info?.avatar_base64 || user?.avatar_url || "",
           position: resume?.experience?.[0]?.position || job?.title || "Applicant",
           experience: experienceYears,
           skills: (resume?.skills || []).map((s) => s.name).slice(0, 8),
@@ -244,6 +244,29 @@ router.get("/jobs", auth(["recruiter", "admin"]), async (req, res) => {
     res.json(jobs.map((j) => j.toPublicJSON()));
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch jobs" });
+  }
+});
+
+router.patch("/applications/:id/status", auth(["recruiter", "admin"]), async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!["pending", "reviewed", "shortlisted", "interviewed", "rejected", "hired"].includes(status)) {
+      return res.status(400).json({ error: "Invalid status" });
+    }
+    const application = await Application.findById(req.params.id).populate("job_id");
+    if (!application) return res.status(404).json({ error: "Application not found" });
+
+    // Verify ownership
+    if (application.job_id.recruiter_id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    application.status = status;
+    await application.save();
+    
+    res.json(application.toPublicJSON());
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update application status" });
   }
 });
 

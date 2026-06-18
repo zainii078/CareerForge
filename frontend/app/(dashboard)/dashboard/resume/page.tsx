@@ -145,6 +145,7 @@ const personalInfoSchema = z.object({
   linkedin: z.string().optional(),
   website: z.string().optional(),
   github: z.string().optional(),
+  avatar_base64: z.string().optional(),
   summary: z.string().min(10, "Summary is required"),
 });
 
@@ -305,6 +306,46 @@ export default function ResumeBuilderPage() {
                         {personalForm.formState.errors.full_name.message}
                       </p>
                     )}
+                  </div>
+                  <div className="col-span-2">
+                    <Label>Profile Picture</Label>
+                    <div className="flex items-center gap-4 mt-1">
+                      {personalForm.watch("avatar_base64") ? (
+                        <div className="relative h-16 w-16 rounded-full overflow-hidden border">
+                          <img src={personalForm.watch("avatar_base64")} alt="Profile" className="object-cover h-full w-full" />
+                          {isEditing && (
+                            <button
+                              type="button"
+                              onClick={() => personalForm.setValue("avatar_base64", "", { shouldDirty: true })}
+                              className="absolute inset-0 bg-black/50 flex items-center justify-center text-white opacity-0 hover:opacity-100 transition-opacity"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center border">
+                          <User className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                      )}
+                      {isEditing && (
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          className="flex-1"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                personalForm.setValue("avatar_base64", reader.result as string, { shouldDirty: true });
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                      )}
+                    </div>
                   </div>
                   <div>
                     <Label>Email</Label>

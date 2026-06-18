@@ -23,6 +23,14 @@ const templates = [
   { id: "elegant", name: "Elegant", description: "Soft palette with a refined structure", category: "Premium", popular: false, previewImage: "https://images.pexels.com/photos/3182745/pexels-photo-3182745.jpeg?auto=compress&cs=tinysrgb&w=800" },
   { id: "startup", name: "Startup", description: "Modern design built for founders and builders", category: "Popular", popular: true, previewImage: "https://images.pexels.com/photos/3184420/pexels-photo-3184420.jpeg?auto=compress&cs=tinysrgb&w=800" },
   { id: "consultant", name: "Consultant", description: "Clean layout that emphasizes experience", category: "Professional", popular: false, previewImage: "https://images.pexels.com/photos/3184417/pexels-photo-3184417.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { id: "academic", name: "Academic CV", description: "Detailed format for research and academic roles", category: "Academic", popular: false, previewImage: "https://images.pexels.com/photos/3184324/pexels-photo-3184324.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { id: "vibrant", name: "Vibrant", description: "Energetic colors for creative professionals", category: "Design", popular: false, previewImage: "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { id: "corporate", name: "Corporate", description: "Standardized formatting for large enterprises", category: "Professional", popular: false, previewImage: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { id: "sleek", name: "Sleek", description: "Highly optimized aesthetic layout", category: "Popular", popular: true, previewImage: "https://images.pexels.com/photos/3183165/pexels-photo-3183165.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { id: "dynamic", name: "Dynamic", description: "Action-oriented layout highlighting achievements", category: "ATS Friendly", popular: false, previewImage: "https://images.pexels.com/photos/3184653/pexels-photo-3184653.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { id: "refined", name: "Refined", description: "Refined typography and spacing", category: "Premium", popular: false, previewImage: "https://images.pexels.com/photos/3182745/pexels-photo-3182745.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { id: "crisp", name: "Crisp", description: "Sharp boundaries and distinct sections", category: "Clean", popular: false, previewImage: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { id: "futuristic", name: "Futuristic", description: "Forward-looking and tech-focused design", category: "Design", popular: false, previewImage: "https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?auto=compress&cs=tinysrgb&w=800" },
 ];
 
 export default function TemplatesPage() {

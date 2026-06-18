@@ -65,6 +65,7 @@ function CandidatePanel({
 }: {
   candidate: Candidate;
   onClose: () => void;
+  onUpdateStatus: (id: string, status: string) => void;
 }) {
   return (
     <motion.div
@@ -200,16 +201,35 @@ function CandidatePanel({
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 mt-6">
-            <Button className="flex-1 bg-teal-500 hover:bg-teal-600 text-gray-900 font-medium">
-              Schedule Interview
-            </Button>
-            <Button variant="outline" className="bg-gray-800 border-gray-700 text-gray-300">
-              <Mail className="h-4 w-4" />
-            </Button>
-            <Button className="bg-green-500 hover:bg-green-600 text-gray-900">
-              <Star className="h-4 w-4" />
-            </Button>
+          <div className="flex flex-col gap-3 mt-6">
+            <div className="flex gap-2">
+              <Button 
+                className="flex-1 bg-teal-500 hover:bg-teal-600 text-gray-900 font-medium"
+                onClick={() => onUpdateStatus(candidate.id, "shortlisted")}
+              >
+                Shortlist
+              </Button>
+              <Button 
+                className="flex-1 bg-green-500 hover:bg-green-600 text-gray-900 font-medium"
+                onClick={() => onUpdateStatus(candidate.id, "interviewed")}
+              >
+                Interview
+              </Button>
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-medium"
+                onClick={() => onUpdateStatus(candidate.id, "hired")}
+              >
+                Hire
+              </Button>
+              <Button 
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium"
+                onClick={() => onUpdateStatus(candidate.id, "rejected")}
+              >
+                Reject
+              </Button>
+            </div>
           </div>
         </div>
       </ScrollArea>
@@ -254,6 +274,18 @@ export default function CandidatesPage() {
     }
     return true;
   });
+
+  const handleUpdateStatus = async (id: string, status: string) => {
+    try {
+      await api.recruiter.updateStatus(id, status);
+      setCandidates(candidates.map(c => c.id === id ? { ...c, status } as Candidate : c));
+      if (selectedCandidate?.id === id) {
+        setSelectedCandidate({ ...selectedCandidate, status } as Candidate);
+      }
+    } catch (error) {
+      console.error("Failed to update status", error);
+    }
+  };
 
   return (
     <div className="p-4 md:p-6 lg:p-8">
@@ -417,6 +449,7 @@ export default function CandidatesPage() {
             <CandidatePanel
               candidate={selectedCandidate}
               onClose={() => setSelectedCandidate(null)}
+              onUpdateStatus={handleUpdateStatus}
             />
           </>
         )}
